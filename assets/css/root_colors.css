@@ -1,0 +1,24 @@
+:root {
+  /* Primary brand colors */
+  --primary: #4f46e5;     /* Indigo */
+  --primary-dark: #3730a3;
+  --primary-light: #818cf8;
+
+  /* Secondary / Accent */
+  --secondary: #f59e0b;   /* Amber */
+  --secondary-dark: #b45309;
+  --secondary-light: #fcd34d;
+
+  /* Neutrals */
+  --black: #111827;
+  --dark-gray: #374151;
+  --gray: #6b7280;
+  --light-gray: #d1d5db;
+  --white: #ffffff;
+
+  /* Feedback colors */
+  --success: #10b981;     /* Green */
+  --warning: #fbbf24;     /* Yellow */
+  --error: #ef4444;       /* Red */
+  --info: #3b82f6;        /* Blue */
+}
