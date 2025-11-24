@@ -460,6 +460,8 @@
     </div>
   </div>
 
+  <!-- ==========BANNER MODAL========== -->
+
   <!-- Banner Modal -->
   <div class="modal fade modal-fullpage" id="bannerModal" tabindex="-1">
     <div class="modal-dialog">
@@ -570,7 +572,7 @@
           success: function(res) {
 
             console.log(res);
-            debugger;
+            // debugger;
 
             $bannerTableBody.empty();
             res.rows.forEach(function(row, idx) {
@@ -660,6 +662,11 @@
     });
   </script>
   <!-- banner js -->
+
+  <!-- ==========BANNER MODAL========== -->
+
+
+  <!-- ==========ABOUT MODAL========== -->
 
   <!-- About Modal -->
   <div class="modal fade modal-fullpage" id="aboutModal" tabindex="-1">
@@ -918,6 +925,11 @@
   </script>
   <!-- about js -->
 
+  <!-- ==========ABOUT MODAL========== -->
+
+
+  <!-- ==========EXPERIENCE MODAL========== -->
+
   <!-- Experience Modal for Film Director -->
   <div class="modal fade modal-fullpage" id="experienceModal" tabindex="-1">
     <div class="modal-dialog">
@@ -1006,49 +1018,18 @@
             <div class="table-responsive">
               <table class="table">
                 <thead>
-                  <tr>
+                  <tr style="width: 100vw;">
                     <th>Title</th>
                     <th>Year</th>
                     <th>Role</th>
                     <th>Studio</th>
                     <th>Type</th>
-                    <th>Release/Festival</th>
-                    <th>Awards</th>
+
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- JS will render entries dynamically here -->
-                  <tr>
-                    <td>Shadows of Chennai</td>
-                    <td>2024</td>
-                    <td>Director</td>
-                    <td>Dream Pictures</td>
-                    <td>Feature Film</td>
-                    <td>Cannes 2024</td>
-                    <td>Best Newcomer</td>
-                    <td>
-                      <div class="table-actions">
-                        <button class="action-btn btn-success"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Promo for Future Stars</td>
-                    <td>2023</td>
-                    <td>Assistant Director</td>
-                    <td>Alpha Studios</td>
-                    <td>Ad Film</td>
-                    <td>Viral – TV+YouTube</td>
-                    <td>–</td>
-                    <td>
-                      <div class="table-actions">
-                        <button class="action-btn btn-success"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                      </div>
-                    </td>
-                  </tr>
+
                 </tbody>
               </table>
             </div>
@@ -1058,7 +1039,6 @@
       </div>
     </div>
   </div>
-
   <!-- experience js -->
   <script>
     $(function() {
@@ -1088,9 +1068,9 @@
           success: function(res) {
             $experienceTableBody.empty();
             res.rows.forEach(function(row) {
-              let imgCell = row.project_img ? `<img src="/backend/${row.project_img}" style="width:60px;border-radius:10px;">` : '';
+              let imgCell = row.project_img ? `<img src="backend/${row.project_img}" style="width:60px;border-radius:10px;">` : '';
               $experienceTableBody.append(`
-            <tr data-id="${row.id}">
+            <tr data-id="${row.id}" class="align-middle w-100">
               <td>${imgCell + ' ' + (row.title || "")}</td>
               <td>${row.year || ""}</td>
               <td>${row.role || ""}</td>
@@ -1118,7 +1098,7 @@
         const formData = new FormData(this);
 
         console.log(...formData.entries());
-        debugger;
+        // debugger;
 
         const isEditing = $experienceEditId.val() ? true : false;
         $.ajax({
@@ -1196,6 +1176,9 @@
   </script>
   <!-- experience js -->
 
+  <!-- ==========EXPERIENCE MODAL========== -->
+
+  <!-- ==========FILMOGRAPHY MODAL========== -->
 
   <!-- Filmography Modal -->
   <div class="modal fade modal-fullpage" id="filmographyModal" tabindex="-1">
@@ -1245,14 +1228,6 @@
                 <label class="form-label">Director</label>
                 <input type="text" class="form-control" name="director" placeholder="Director name" required>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Video URL (optional)</label>
-                <input type="url" class="form-control" name="video_url" placeholder="https://youtube.com/watch?v=...">
-              </div>
-              <div class="col-md-12">
-                <label class="form-label">Synopsis</label>
-                <textarea class="form-control" name="film_desc" rows="3" placeholder="Short summary for card"></textarea>
-              </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary me-2">
                   <i class="fas fa-plus me-2"></i>Save Project
@@ -1291,8 +1266,133 @@
       </div>
     </div>
   </div>
+  <!-- filmography js -->
+  <script>
+    $(function() {
+      // Selectors for form and table
+      const $filmographyForm = $('#filmographyForm');
+      const $filmographyEditId = $('#filmographyEditId');
+      const $filmographyTableBody = $('#filmographyModal .table tbody');
+      const $filmographyImgInput = $('#filmography_img');
+      const $filmographyImgPreview = $('#filmography-img-preview');
 
+      // Image preview when file chosen
+      $filmographyImgInput.on('change', function() {
+        const file = this.files[0];
+        if (file) {
+          $filmographyImgPreview.attr('src', URL.createObjectURL(file)).show();
+        } else {
+          $filmographyImgPreview.attr('src', "#").hide();
+        }
+      });
 
+      // Load all filmography entries from the backend
+      function loadFilmographyTable() {
+        $.ajax({
+          url: 'backend/filmography_list.php',
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+
+            console.log(res);
+            debugger;
+
+            $filmographyTableBody.empty();
+            res.rows.forEach(function(row) {
+              let imgCell = row.image ? `<img src=" backend/${row.image}" style="width:60px;border-radius:10px;">` : '';
+              $filmographyTableBody.append(`
+            <tr data-id="${row.id}">
+              <td>${imgCell}</td>
+              <td>${row.status || ""}</td>
+              <td>${row.film_name || ""}</td>
+              <td>${row.year || ""}</td>
+              <td>${row.genre || ""}</td>
+              <td>${row.role || ""}</td>
+              <td>${row.director || ""}</td>
+              <td>
+                <button class="btn btn-success edit-film-btn"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger delete-film-btn"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          `);
+            });
+          }
+        });
+      }
+      loadFilmographyTable();
+
+      // Save or Update Film Project (collect all form data, including file)
+      $filmographyForm.on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this); // Collects all input and file fields!
+
+        console.log(...formData.entries());
+        debugger;
+
+        const isEdit = $filmographyEditId.val() ? true : false;
+        $.ajax({
+          url: isEdit ? 'backend/filmography_update.php' : 'backend/filmography_save.php',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          success: function(result) {
+            if (result.status === 'success') {
+              loadFilmographyTable();
+              $filmographyForm[0].reset();
+              $filmographyImgPreview.hide();
+              $filmographyEditId.val('');
+            } else {
+              alert('Error: ' + (result.msg || 'Unknown error'));
+            }
+          },
+          error: function(xhr) {
+            alert('Network error');
+          }
+        });
+      });
+
+      // Edit handler: populate form fields from table
+      $filmographyTableBody.on('click', '.edit-film-btn', function() {
+        const $tr = $(this).closest('tr');
+        const id = $tr.data('id');
+        $filmographyEditId.val(id);
+        $filmographyForm.find('[name="film_name"]').val($tr.find('td:eq(2)').text());
+        $filmographyForm.find('[name="status"]').val($tr.find('td:eq(1)').text());
+        $filmographyForm.find('[name="year"]').val($tr.find('td:eq(3)').text());
+        $filmographyForm.find('[name="genre"]').val($tr.find('td:eq(4)').text());
+        $filmographyForm.find('[name="role"]').val($tr.find('td:eq(5)').text());
+        $filmographyForm.find('[name="director"]').val($tr.find('td:eq(6)').text());
+        let imgSrc = $tr.find('td:eq(0) img').attr('src');
+        if (imgSrc) $filmographyImgPreview.attr('src', imgSrc).show();
+        else $filmographyImgPreview.attr('src', "#").hide();
+        // If you add synopsis/status to table, fill .find('[name="film_desc"]').val(...)
+      });
+
+      // Delete handler
+      $filmographyTableBody.on('click', '.delete-film-btn', function() {
+        const $tr = $(this).closest('tr');
+        const id = $tr.data('id');
+        if (confirm('Are you sure to delete this project?')) {
+          $.ajax({
+            url: 'backend/filmography_delete.php',
+            type: 'POST',
+            data: {
+              id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+              if (res.status === 'success') $tr.remove();
+            }
+          });
+        }
+      });
+    });
+  </script>
+  <!-- filmography js -->
+
+  <!-- ==========FILMOGRAPHY MODAL========== -->
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
