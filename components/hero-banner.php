@@ -1,13 +1,29 @@
+<?php
+
+$sql = "SELECT * FROM banner ORDER BY id DESC LIMIT 1";
+$result = $conn->query($sql);
+
+$banner = $result->fetch_assoc();
+
+// Provide default values if database is empty or fields are missing
+$banner_name = $banner['banner_name'] ?? 'Your Name';
+$banner_role = $banner['banner_role'] ?? 'Assistant Director';
+$banner_description = $banner['banner_description'] ?? 'Crafting Cinematic Excellence, One Frame at a Time';
+$banner_img = $banner['banner_img'];
+
+echo ('banner img: ' . $banner_img);
+?>
+
 
 <section id="home" class="cinematic-hero">
   <div class="hero-overlay"></div>
-  <img src="https://res.cloudinary.com/dlqrmrjtw/image/upload/v1762620782/Screenshot_2025-11-08_104842_adbegm.png" alt="Cinematic Hero" class="hero-background-image">
+  <img src="<?= htmlspecialchars($banner_img) ?>" alt="Cinematic Hero" class="hero-background-image">
   <div class="hero-content-wrapper">
     <div class="container">
       <div class="hero-text-content">
-        <span class="hero-tag">Assistant Director</span>
-        <h1 class="hero-main-title"><?= htmlspecialchars($username) ?></h1>
-        <p class="hero-tagline">Crafting Cinematic Excellence, One Frame at a Time</p>
+        <span class="hero-tag"><?= htmlspecialchars($banner_role) ?></span>
+        <h1 class="hero-main-title"><?= htmlspecialchars($banner_name) ?></h1>
+        <p class="hero-tagline"><?= htmlspecialchars($banner_description) ?></p>
         <div class="hero-buttons">
           <a href="#filmography" class="btn-modern btn-primary-modern">
             <span>Explore Portfolio</span>
@@ -19,11 +35,5 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="hero-scroll-indicator">
-      <span>Scroll Down</span>
-      <i class="bi bi-chevron-down"></i>
-    </div> -->
-
   </div>
 </section>

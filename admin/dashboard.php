@@ -479,10 +479,23 @@
           <form id="bannerForm">
             <input type="hidden" name="id" id="bannerEditId">
             <div class="row g-3">
+
               <div class="col-md-6">
                 <label class="form-label">Banner Title</label>
                 <input type="text" class="form-control" name="banner_name" id="banner_name" placeholder="Enter banner title" required>
               </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Banner role</label>
+                <input type="text" class="form-control" name="banner_role" id="banner_role" placeholder="Enter banner role" required>
+              </div>
+
+              <div class="col-md-12">
+                <label class="form-label">Banner description</label>
+                <input type="text" class="form-control" name="banner_description" id="banner_description" placeholder="Enter banner description" required>
+
+              </div>
+
               <div class="col-md-12">
                 <label class="form-label">Banner Image</label>
                 <input type="file" class="form-control" name="banner_img" id="banner_img" accept="image/*">
@@ -507,34 +520,14 @@
                   <tr>
                     <th>Image</th>
                     <th>Title</th>
+                    <th>desciption</th>
+                    <th>role</th>
                     <th>Actions</th>
+
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td><img src="https://via.placeholder.com/100" class="image-preview" alt="Banner"></td>
-                    <td>Welcome Banner</td>
-                    <td><span class="status-badge status-active">Active</span></td>
-                    <td>1</td>
-                    <td>
-                      <div class="table-actions">
-                        <button class="action-btn btn-success"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><img src="https://via.placeholder.com/100" class="image-preview" alt="Banner"></td>
-                    <td>Promotional Banner</td>
-                    <td><span class="status-badge status-inactive">Inactive</span></td>
-                    <td>2</td>
-                    <td>
-                      <div class="table-actions">
-                        <button class="action-btn btn-success"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
-                      </div>
-                    </td>
-                  </tr>
+
                 </tbody>
               </table>
             </div>
@@ -544,7 +537,7 @@
     </div>
   </div>
   <!-- banner js -->
-  <script>
+  <!-- <script>
     $(function() {
       const $bannerForm = $('#bannerForm');
       const $bannerEditId = $('#bannerEditId');
@@ -629,6 +622,126 @@
         const id = $tr.data('id');
         $bannerEditId.val(id);
         $bannerNameInput.val($tr.find('td:eq(1)').text());
+        let imgSrc = $tr.find('td:eq(0) img').attr('src');
+        if (imgSrc) {
+          $bannerPreview.attr('src', imgSrc).show();
+        } else {
+          $bannerPreview.attr('src', "#").hide();
+        }
+      });
+
+      // Delete handler
+      $bannerTableBody.on('click', '.delete-banner-btn', function() {
+        const $tr = $(this).closest('tr');
+        const id = $tr.data('id');
+        if (confirm('Are you sure to delete this banner?')) {
+          $.ajax({
+            url: 'backend/banner_delete.php',
+            type: 'POST',
+            data: {
+              id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+              if (res.status === 'success') {
+                $tr.remove();
+              } else {
+                alert('Error deleting banner');
+              }
+            }
+          });
+        }
+      });
+    });
+  </script> -->
+
+  <script>
+    $(function() {
+      const $bannerForm = $('#bannerForm');
+      const $bannerEditId = $('#bannerEditId');
+      const $bannerTableBody = $('#bannerModal .table tbody');
+      const $bannerImgInput = $('#banner_img');
+      const $bannerPreview = $('#banner-preview');
+      const $bannerNameInput = $('#banner_name');
+      const $bannerRoleInput = $('#banner_role');
+      const $bannerDescInput = $('#banner_description');
+
+      // Preview banner image
+      $bannerImgInput.on('change', function(e) {
+        const file = this.files[0];
+        if (file) {
+          $bannerPreview.attr('src', URL.createObjectURL(file)).show();
+        } else {
+          $bannerPreview.attr('src', "#").hide();
+        }
+      });
+
+      // Load banners (AJAX to PHP)
+      function loadBannerTable() {
+        $.ajax({
+          url: 'backend/banner_list.php',
+          type: 'GET',
+          dataType: 'json',
+          success: function(res) {
+            $bannerTableBody.empty();
+            res.rows.forEach(function(row, idx) {
+              let imgSrc = row.banner_img ? 'backend/' + row.banner_img : '';
+              $bannerTableBody.append(`
+            <tr data-id="${row.id}">
+              <td>${imgSrc ? `<img src="${imgSrc}" class="image-preview" style="width:100px;">` : ''}</td>
+              <td>${row.banner_name || ""}</td>
+              <td>${row.banner_description || ""}</td>
+              <td>${row.banner_role || ""}</td>
+              <td>
+                <div class="table-actions">
+                  <button class="action-btn btn-success edit-banner-btn"><i class="fas fa-edit"></i> Edit</button>
+                  <button class="action-btn btn-danger delete-banner-btn"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+              </td>
+            </tr>
+          `);
+            });
+          }
+        });
+      }
+      loadBannerTable();
+
+      // Save NEW or UPDATE
+      $bannerForm.on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const isEditing = $bannerEditId.val() ? true : false;
+        $.ajax({
+          url: isEditing ? 'backend/banner_update.php' : 'backend/banner_save.php',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          success: function(result) {
+            if (result.status === 'success') {
+              loadBannerTable();
+              $bannerForm[0].reset();
+              $bannerPreview.hide();
+              $bannerEditId.val('');
+            } else {
+              alert('Error: ' + (result.msg || 'Unknown error'));
+            }
+          },
+          error: function(xhr) {
+            alert('Network error');
+          }
+        });
+      });
+
+      // Edit handler
+      $bannerTableBody.on('click', '.edit-banner-btn', function() {
+        const $tr = $(this).closest('tr');
+        const id = $tr.data('id');
+        $bannerEditId.val(id);
+        $bannerNameInput.val($tr.find('td:eq(1)').text());
+        $bannerDescInput.val($tr.find('td:eq(2)').text());
+        $bannerRoleInput.val($tr.find('td:eq(3)').text());
         let imgSrc = $tr.find('td:eq(0) img').attr('src');
         if (imgSrc) {
           $bannerPreview.attr('src', imgSrc).show();
