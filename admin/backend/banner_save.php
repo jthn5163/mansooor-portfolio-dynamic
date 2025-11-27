@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Handle image upload if exists
   if (!empty($_FILES['banner_img']['name'])) {
-    $target_dir = "../uploads";
+    $target_dir = "uploads/";
     if (!is_dir($target_dir)) {
       mkdir($target_dir, 0777, true);
     }

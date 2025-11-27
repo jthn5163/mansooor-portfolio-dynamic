@@ -10,14 +10,13 @@ $banner_name = $banner['banner_name'] ?? 'Your Name';
 $banner_role = $banner['banner_role'] ?? 'Assistant Director';
 $banner_description = $banner['banner_description'] ?? 'Crafting Cinematic Excellence, One Frame at a Time';
 $banner_img = $banner['banner_img'];
-
-echo ('banner img: ' . $banner_img);
+$banner_img_url = '/MANSOOR-PORTFOLIO-DYNAMIC/admin/backend/' . $banner_img;
 ?>
 
 
 <section id="home" class="cinematic-hero">
   <div class="hero-overlay"></div>
-  <img src="<?= htmlspecialchars($banner_img) ?>" alt="Cinematic Hero" class="hero-background-image">
+  <img src="<?= htmlspecialchars($banner_img_url) ?>"  alt="Cinematic Hero" class="hero-background-image">
   <div class="hero-content-wrapper">
     <div class="container">
       <div class="hero-text-content">
